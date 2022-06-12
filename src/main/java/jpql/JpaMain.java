@@ -1,7 +1,6 @@
 package jpql;
 
 import javax.persistence.*;
-import java.util.List;
 
 public class JpaMain {
 
@@ -38,17 +37,14 @@ public class JpaMain {
             member3.setTeam(teamB);
             em.persist(member3);
 
-            em.flush();
+            //Flush 자동 호출
+            int resultCount = em.createQuery("update Member m set m.age = 20")
+                    .executeUpdate();
+
             em.clear();
 
-            String query = "select m from Member m where m.team = :team";
-            List<Member> members = em.createQuery(query, Member.class)
-                    .setParameter("team", teamA)
-                    .getResultList();
-
-            for (Member member : members) {
-                System.out.println("member = " + member);
-            }
+            Member findMember = em.find(Member.class, member1.getId());
+            System.out.println("findMember = " + findMember.getAge());
 
             tx.commit();
         } catch (Exception e) {
